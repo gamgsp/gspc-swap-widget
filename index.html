@@ -3,183 +3,223 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GSPC Exchange - Live Crypto Swap Calculator</title>
+  <title>GSPC Exchange | Instant Crypto Swap & Rate Calculator</title>
+  <meta name="description" content="Embeddable, responsive crypto swap and rate calculator for GSPC Exchange. Supports 21 multi-chain assets with non-custodial P2P escrow.">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+    :root {
+      --bg: #0b0e14;
+      --card-bg: #151a23;
+      --border: #232d3f;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text-main: #f1f5f9;
+      --text-sub: #94a3b8;
+      --badge-bg: #1e293b;
+      --success: #10b981;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: transparent;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      color: #e2e8f0;
-      padding: 12px;
+      padding: 16px;
     }
     .widget-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
       width: 100%;
-      max-width: 360px;
-      background: #0f172a;
-      border: 1px solid #1e293b;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      max-width: 440px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
     .brand {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
     .brand-logo {
-      width: 28px;
       height: 28px;
-      border-radius: 6px;
     }
     .brand-title {
+      font-size: 1.1rem;
       font-weight: 700;
-      font-size: 15px;
-      color: #f8fafc;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.5px;
     }
     .badge {
-      font-size: 10px;
-      padding: 3px 8px;
-      background: #064e3b;
-      color: #34d399;
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
       border-radius: 9999px;
+      font-size: 0.75rem;
+      color: var(--success);
       font-weight: 600;
-      letter-spacing: 0.04em;
     }
     .field-group {
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
+      background: #0f141c;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      margin-bottom: 12px;
     }
     .field-label {
-      font-size: 11px;
-      color: #94a3b8;
-      margin-bottom: 4px;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin-bottom: 6px;
       display: flex;
       justify-content: space-between;
     }
     .field-input-row {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      gap: 12px;
     }
-    input[type="number"] {
+    .field-input-row input {
       background: transparent;
       border: none;
-      font-size: 20px;
+      color: var(--text-main);
+      font-size: 1.3rem;
       font-weight: 600;
-      color: #f8fafc;
       width: 60%;
       outline: none;
     }
-    select {
-      background: #0f172a;
-      border: 1px solid #475569;
-      color: #f8fafc;
-      font-size: 13px;
+    .field-input-row select {
+      background: var(--card-bg);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.95rem;
       font-weight: 600;
-      padding: 6px 10px;
-      border-radius: 8px;
-      outline: none;
       cursor: pointer;
+      outline: none;
+      max-width: 45%;
+    }
+    .swap-btn-row {
+      display: flex;
+      justify-content: center;
+      margin: -6px 0 6px 0;
+    }
+    .swap-icon-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-sub);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .swap-icon-btn:hover {
+      color: var(--text-main);
+      border-color: var(--accent);
+      transform: rotate(180deg);
     }
     .rate-info {
-      font-size: 11px;
-      color: #64748b;
       display: flex;
       justify-content: space-between;
-      margin: 12px 2px;
+      font-size: 0.8rem;
+      color: var(--text-sub);
+      margin: 12px 4px 18px 4px;
     }
-    .rate-info span.value {
-      color: #cbd5e1;
-      font-weight: 500;
-    }
-    .btn-trade {
-      display: block;
+    .action-btn {
       width: 100%;
-      text-align: center;
-      background: #2563eb;
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 14px;
-      padding: 12px;
-      border-radius: 10px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
       text-decoration: none;
-      transition: background 0.15s ease;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    }
-    .btn-trade:hover {
-      background: #1d4ed8;
-    }
-    .footer {
-      margin-top: 12px;
+      display: block;
       text-align: center;
-      font-size: 11px;
-      color: #64748b;
     }
-    .footer a {
-      color: #94a3b8;
+    .action-btn:hover {
+      background: var(--accent-hover);
+    }
+    .footer-links {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+    .footer-links a {
+      color: var(--text-sub);
       text-decoration: none;
     }
-    .footer a:hover {
-      color: #38bdf8;
+    .footer-links a:hover {
+      color: var(--text-main);
     }
     .embed-trigger {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 10px;
-      color: #475569;
       cursor: pointer;
-      text-decoration: underline;
+      color: var(--accent);
     }
+    /* Embed Modal */
     .modal {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.7);
       justify-content: center;
       align-items: center;
       padding: 16px;
     }
     .modal-content {
-      background: #1e293b;
-      padding: 16px;
-      border-radius: 12px;
-      max-width: 320px;
-      font-size: 12px;
-    }
-    .modal-content textarea {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      max-width: 480px;
       width: 100%;
-      height: 70px;
-      background: #0f172a;
-      color: #38bdf8;
-      border: 1px solid #334155;
-      border-radius: 6px;
-      padding: 8px;
+    }
+    .modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .code-block {
+      background: #090d14;
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 8px;
       font-family: monospace;
-      font-size: 11px;
-      margin: 8px 0;
-      resize: none;
+      font-size: 0.8rem;
+      color: #38bdf8;
+      word-break: break-all;
+      user-select: all;
     }
     .close-btn {
-      background: #334155;
-      color: #f8fafc;
+      margin-top: 12px;
+      background: var(--border);
       border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
       cursor: pointer;
       float: right;
     }
@@ -190,10 +230,10 @@
   <div class="widget-card">
     <div class="header">
       <div class="brand">
-        <img class="brand-logo" src="https://raw.githubusercontent.com/gamgsp/globaldata/main/GSPC%20Exchange/gspcexc-dark-logo.png" alt="GSPC">
+        <img class="brand-logo" src="https://exchange.gspcoin.us/exchange-banner.png" alt="GSPC">
         <span class="brand-title">GSPC Exchange</span>
       </div>
-      <span class="badge">P2P Escrow</span>
+      <span class="badge">21 Assets • P2P Escrow</span>
     </div>
 
     <!-- FROM -->
@@ -204,12 +244,34 @@
       <div class="field-input-row">
         <input type="number" id="sendAmount" value="100" min="0" step="any">
         <select id="sendCoin">
-          <option value="USDT" selected>USDT</option>
-          <option value="BTC">BTC</option>
-          <option value="LTC">LTC</option>
-          <option value="SOL">SOL</option>
+          <option value="USDT" selected>USDT (Tether)</option>
+          <option value="USDC">USDC (USD Coin)</option>
+          <option value="GSPC">GSPC (GSPCoin)</option>
+          <option value="BTC">BTC (Bitcoin)</option>
+          <option value="ETH">ETH (Ethereum)</option>
+          <option value="LTC">LTC (Litecoin)</option>
+          <option value="BNB">BNB (BNB Chain)</option>
+          <option value="SOL">SOL (Solana)</option>
+          <option value="XRP">XRP (Ripple)</option>
+          <option value="DOGE">DOGE (Dogecoin)</option>
+          <option value="ADA">ADA (Cardano)</option>
+          <option value="TRX">TRX (TRON)</option>
+          <option value="AVAX">AVAX (Avalanche)</option>
+          <option value="SUI">SUI (Sui)</option>
+          <option value="NEAR">NEAR (NEAR Protocol)</option>
+          <option value="BCH">BCH (Bitcoin Cash)</option>
+          <option value="ETC">ETC (Ethereum Classic)</option>
+          <option value="DASH">DASH (Dash)</option>
+          <option value="ZEC">ZEC (Zcash)</option>
+          <option value="KAS">KAS (Kaspa)</option>
+          <option value="DGB">DGB (DigiByte)</option>
         </select>
       </div>
+    </div>
+
+    <!-- SWAP BUTTON -->
+    <div class="swap-btn-row">
+      <button class="swap-icon-btn" onclick="flipCoins()" title="Switch pairs">⇅</button>
     </div>
 
     <!-- TO -->
@@ -220,89 +282,146 @@
       <div class="field-input-row">
         <input type="number" id="receiveAmount" value="1000" readonly>
         <select id="receiveCoin">
-          <option value="GSPC" selected>GSPC</option>
-          <option value="USDT">USDT</option>
-          <option value="BTC">BTC</option>
-          <option value="LTC">LTC</option>
+          <option value="GSPC" selected>GSPC (GSPCoin)</option>
+          <option value="USDT">USDT (Tether)</option>
+          <option value="USDC">USDC (USD Coin)</option>
+          <option value="BTC">BTC (Bitcoin)</option>
+          <option value="ETH">ETH (Ethereum)</option>
+          <option value="LTC">LTC (Litecoin)</option>
+          <option value="BNB">BNB (BNB Chain)</option>
+          <option value="SOL">SOL (Solana)</option>
+          <option value="XRP">XRP (Ripple)</option>
+          <option value="DOGE">DOGE (Dogecoin)</option>
+          <option value="ADA">ADA (Cardano)</option>
+          <option value="TRX">TRX (TRON)</option>
+          <option value="AVAX">AVAX (Avalanche)</option>
+          <option value="SUI">SUI (Sui)</option>
+          <option value="NEAR">NEAR (NEAR Protocol)</option>
+          <option value="BCH">BCH (Bitcoin Cash)</option>
+          <option value="ETC">ETC (Ethereum Classic)</option>
+          <option value="DASH">DASH (Dash)</option>
+          <option value="ZEC">ZEC (Zcash)</option>
+          <option value="KAS">KAS (Kaspa)</option>
+          <option value="DGB">DGB (DigiByte)</option>
         </select>
       </div>
     </div>
 
     <div class="rate-info">
-      <span>Estimated Rate:</span>
-      <span class="value" id="rateDisplay">1 USDT ≈ 10.00 GSPC</span>
-    </div>
-    <div class="rate-info">
-      <span>Settlement:</span>
-      <span class="value">Non-Custodial Escrow</span>
+      <span>Exchange Rate</span>
+      <span id="rateLabel">1 USDT ≈ 1,000 GSPC</span>
     </div>
 
-    <a id="tradeBtn" class="btn-trade" href="https://exchange.gspcoin.us/swap" target="_blank" rel="noopener">
+    <a id="tradeBtn" class="action-btn" href="https://exchange.gspcoin.us/swap" target="_blank" rel="noopener">
       Trade on GSPC Exchange
     </a>
 
-    <div class="footer">
-      Powered by <a href="https://exchange.gspcoin.us" target="_blank" rel="noopener">GSPC Exchange</a>
-      <br>
-      <span class="embed-trigger" onclick="openModal()">Embed this widget</span>
+    <div class="footer-links">
+      <span>🛡️ Non-Custodial P2P Escrow</span>
+      <span class="embed-trigger" onclick="openModal()">Embed Widget &lt;/&gt;</span>
     </div>
   </div>
 
   <!-- Embed Modal -->
-  <div class="modal" id="embedModal" onclick="closeModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-      <strong>Embed on your website</strong>
-      <p style="color: #94a3b8; font-size: 11px; margin-top: 4px;">Copy & paste this code into your HTML:</p>
-      <textarea readonly>&lt;iframe src="https://gamgsp.github.io/gspc-swap-widget/" width="360" height="420" frameborder="0" style="border:none;border-radius:16px;overflow:hidden;"&gt;&lt;/iframe&gt;</textarea>
+  <div id="embedModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-title">Embed GSPC Exchange Widget</div>
+      <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">Copy and paste this snippet into your HTML to embed this swap calculator on your website:</p>
+      <div class="code-block" id="embedCode">
+&lt;iframe src="https://gamgsp.github.io/gspc-swap-widget/" width="100%" height="480px" frameborder="0" style="border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);"&gt;&lt;/iframe&gt;
+      </div>
       <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
   </div>
 
   <script>
     const rates = {
-      GSPC: 0.10,
+      GSPC: 0.00020,
       USDT: 1.0,
-      BTC: 85000.0,
-      LTC: 110.0,
-      SOL: 190.0
+      USDC: 1.0,
+      BTC: 89000.0,
+      ETH: 3100.0,
+      LTC: 95.0,
+      BNB: 620.0,
+      SOL: 185.0,
+      XRP: 0.85,
+      DOGE: 0.28,
+      ADA: 0.75,
+      TRX: 0.20,
+      AVAX: 32.0,
+      SUI: 2.80,
+      NEAR: 5.40,
+      BCH: 440.0,
+      ETC: 26.0,
+      DASH: 34.0,
+      ZEC: 45.0,
+      KAS: 0.14,
+      DGB: 0.012
     };
 
-    const sendAmount = document.getElementById("sendAmount");
-    const sendCoin = document.getElementById("sendCoin");
-    const receiveAmount = document.getElementById("receiveAmount");
-    const receiveCoin = document.getElementById("receiveCoin");
-    const rateDisplay = document.getElementById("rateDisplay");
-    const tradeBtn = document.getElementById("tradeBtn");
+    // Attempt to load live rates from exchange
+    async function loadLiveRates() {
+      try {
+        const res = await fetch("https://exchange.gspcoin.us/api/v1/summary");
+        if (res.ok) {
+          const data = await res.json();
+          for (const key in data) {
+            const item = data[key];
+            if (item && item.base_currency && item.last_price && (item.target_currency === 'USDT' || item.target_currency === 'USDC')) {
+              rates[item.base_currency] = parseFloat(item.last_price);
+            }
+          }
+          recalculate();
+        }
+      } catch (e) {
+        // Fallback to defaults
+      }
+    }
 
-    function calculate() {
+    const sendAmount = document.getElementById('sendAmount');
+    const sendCoin = document.getElementById('sendCoin');
+    const receiveAmount = document.getElementById('receiveAmount');
+    const receiveCoin = document.getElementById('receiveCoin');
+    const rateLabel = document.getElementById('rateLabel');
+    const tradeBtn = document.getElementById('tradeBtn');
+
+    function recalculate() {
       const from = sendCoin.value;
       const to = receiveCoin.value;
-      const val = parseFloat(sendAmount.value) || 0;
+      const amt = parseFloat(sendAmount.value) || 0;
 
-      const fromPrice = rates[from] || 1;
-      const toPrice = rates[to] || 1;
+      const fromPriceUsd = rates[from] || 1;
+      const toPriceUsd = rates[to] || 1;
 
-      const rate = fromPrice / toPrice;
-      const received = val * rate;
+      const received = (amt * fromPriceUsd) / toPriceUsd;
+      receiveAmount.value = received > 1 ? received.toLocaleString('en-US', {maximumFractionDigits: 4}) : received.toFixed(6);
 
-      receiveAmount.value = received > 0 ? (received >= 1 ? received.toFixed(2) : received.toFixed(6)) : "0";
-      rateDisplay.innerText = `1 ${from} ≈ ${rate >= 1 ? rate.toFixed(2) : rate.toFixed(6)} ${to}`;
+      const unitRate = fromPriceUsd / toPriceUsd;
+      rateLabel.textContent = `1 ${from} ≈ ${unitRate > 1 ? unitRate.toLocaleString('en-US', {maximumFractionDigits: 4}) : unitRate.toFixed(6)} ${to}`;
 
       tradeBtn.href = `https://exchange.gspcoin.us/swap?from=${from}&to=${to}`;
     }
 
-    sendAmount.addEventListener("input", calculate);
-    sendCoin.addEventListener("change", calculate);
-    receiveCoin.addEventListener("change", calculate);
+    function flipCoins() {
+      const temp = sendCoin.value;
+      sendCoin.value = receiveCoin.value;
+      receiveCoin.value = temp;
+      recalculate();
+    }
 
-    calculate();
+    sendAmount.addEventListener('input', recalculate);
+    sendCoin.addEventListener('change', recalculate);
+    receiveCoin.addEventListener('change', recalculate);
 
     function openModal() {
-      document.getElementById("embedModal").style.display = "flex";
+      document.getElementById('embedModal').style.display = 'flex';
     }
     function closeModal() {
-      document.getElementById("embedModal").style.display = "none";
+      document.getElementById('embedModal').style.display = 'none';
     }
+
+    loadLiveRates();
+    recalculate();
   </script>
 </body>
 </html>

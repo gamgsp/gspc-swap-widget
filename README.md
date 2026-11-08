@@ -1,39 +1,34 @@
-# GSPC Exchange — Free Embeddable Swap Widget
+# GSPC Exchange Embeddable Swap & Rate Calculator Widget
 
-A responsive, dark-themed cryptocurrency swap calculator and live rates widget powered by [GSPC Exchange](https://exchange.gspcoin.us).
+A lightweight, responsive, dark-mode crypto swap and price calculator widget powered by **[GSPC Exchange](https://exchange.gspcoin.us)**.
 
-Webmasters, crypto blogs, community portals, and coin tracker sites can embed this widget in seconds with zero configuration.
+## Live Demo
+👉 **[https://gamgsp.github.io/gspc-swap-widget/](https://gamgsp.github.io/gspc-swap-widget/)**
 
----
+## Supported Cryptocurrencies (21 Assets)
+Direct rate calculation across 21 multi-chain cryptocurrencies:
+- **Core Ecosystem:** GSPC, BTC, ETH, LTC
+- **Stablecoins:** USDT (BEP-20 / TRC-20), USDC (BEP-20 / TRC-20)
+- **Layer 1 & High-Throughput:** BNB, SOL, XRP, DOGE, ADA, TRX, AVAX, SUI, NEAR
+- **UTXO & Privacy:** BCH, ETC, DASH, ZEC, KAS, DGB
 
-## ⚡ Quickstart Embed Code
+## How to Embed
 
-Copy and paste the snippet below into any website, blog, or HTML page:
+Add this iframe to any website, blog, documentation, or dApp:
 
 ```html
 <iframe 
   src="https://gamgsp.github.io/gspc-swap-widget/" 
-  width="360" 
-  height="420" 
+  width="100%" 
+  height="480px" 
   frameborder="0" 
-  style="border:none;border-radius:16px;overflow:hidden;" 
-  title="GSPC Exchange Crypto Swap Widget">
+  style="border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);" 
+  allow="clipboard-write">
 </iframe>
 ```
 
----
-
-## 🛡️ Features
-
-- **Multi-Chain Support**: Instant rate estimation across GSPC, USDT, BTC, LTC, and SOL.
-- **P2P Escrow Protection**: Highlights non-custodial cryptographic escrow security.
-- **Responsive & Lightweight**: Pure HTML/CSS/JavaScript with zero external dependencies.
-- **Direct Trading Link**: Directs users into the active trading/swap room on [exchange.gspcoin.us](https://exchange.gspcoin.us).
-
----
-
-## 🔗 Official Ecosystem Links
-
-- **Exchange**: [https://exchange.gspcoin.us](https://exchange.gspcoin.us)
-- **GSPCoin Network**: [https://gspcoin.us](https://gspcoin.us)
-- **Explorer**: [https://explorer.gspcoin.us](https://explorer.gspcoin.us)
+## Features
+- **Auto-fetching Rates**: Connects to the public `/api/v1/summary` endpoint on GSPC Exchange.
+- **21 Assets Supported**: Full coverage of all exchange digital assets and 100+ pairs.
+- **1-Click Deep Links**: Sends traders straight to the GSPC Exchange Swap terminal.
+- **Pure Self-Custody**: Zero custodial escrow security guarantees.
