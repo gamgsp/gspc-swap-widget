@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GSPC Exchange - Live Crypto Swap Calculator</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: transparent;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #e2e8f0;
+      padding: 12px;
+    }
+    .widget-card {
+      width: 100%;
+      max-width: 360px;
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+    }
+    .brand-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: #f8fafc;
+      letter-spacing: -0.01em;
+    }
+    .badge {
+      font-size: 10px;
+      padding: 3px 8px;
+      background: #064e3b;
+      color: #34d399;
+      border-radius: 9999px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .field-group {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .field-label {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .field-input-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+    input[type="number"] {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      font-weight: 600;
+      color: #f8fafc;
+      width: 60%;
+      outline: none;
+    }
+    select {
+      background: #0f172a;
+      border: 1px solid #475569;
+      color: #f8fafc;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+    }
+    .rate-info {
+      font-size: 11px;
+      color: #64748b;
+      display: flex;
+      justify-content: space-between;
+      margin: 12px 2px;
+    }
+    .rate-info span.value {
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+    .btn-trade {
+      display: block;
+      width: 100%;
+      text-align: center;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      transition: background 0.15s ease;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    .btn-trade:hover {
+      background: #1d4ed8;
+    }
+    .footer {
+      margin-top: 12px;
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+    }
+    .footer a {
+      color: #94a3b8;
+      text-decoration: none;
+    }
+    .footer a:hover {
+      color: #38bdf8;
+    }
+    .embed-trigger {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 10px;
+      color: #475569;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+    .modal-content {
+      background: #1e293b;
+      padding: 16px;
+      border-radius: 12px;
+      max-width: 320px;
+      font-size: 12px;
+    }
+    .modal-content textarea {
+      width: 100%;
+      height: 70px;
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 8px;
+      font-family: monospace;
+      font-size: 11px;
+      margin: 8px 0;
+      resize: none;
+    }
+    .close-btn {
+      background: #334155;
+      color: #f8fafc;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      float: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="widget-card">
+    <div class="header">
+      <div class="brand">
+        <img class="brand-logo" src="https://raw.githubusercontent.com/gamgsp/globaldata/main/GSPC%20Exchange/gspcexc-dark-logo.png" alt="GSPC">
+        <span class="brand-title">GSPC Exchange</span>
+      </div>
+      <span class="badge">P2P Escrow</span>
+    </div>
+
+    <!-- FROM -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>You Send</span>
+      </div>
+      <div class="field-input-row">
+        <input type="number" id="sendAmount" value="100" min="0" step="any">
+        <select id="sendCoin">
+          <option value="USDT" selected>USDT</option>
+          <option value="BTC">BTC</option>
+          <option value="LTC">LTC</option>
+          <option value="SOL">SOL</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- TO -->
+    <div class="field-group">
+      <div class="field-label">
+        <span>You Receive (Estimated)</span>
+      </div>
+      <div class="field-input-row">
+        <input type="number" id="receiveAmount" value="1000" readonly>
+        <select id="receiveCoin">
+          <option value="GSPC" selected>GSPC</option>
+          <option value="USDT">USDT</option>
+          <option value="BTC">BTC</option>
+          <option value="LTC">LTC</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="rate-info">
+      <span>Estimated Rate:</span>
+      <span class="value" id="rateDisplay">1 USDT ≈ 10.00 GSPC</span>
+    </div>
+    <div class="rate-info">
+      <span>Settlement:</span>
+      <span class="value">Non-Custodial Escrow</span>
+    </div>
+
+    <a id="tradeBtn" class="btn-trade" href="https://exchange.gspcoin.us/swap" target="_blank" rel="noopener">
+      Trade on GSPC Exchange
+    </a>
+
+    <div class="footer">
+      Powered by <a href="https://exchange.gspcoin.us" target="_blank" rel="noopener">GSPC Exchange</a>
+      <br>
+      <span class="embed-trigger" onclick="openModal()">Embed this widget</span>
+    </div>
+  </div>
+
+  <!-- Embed Modal -->
+  <div class="modal" id="embedModal" onclick="closeModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <strong>Embed on your website</strong>
+      <p style="color: #94a3b8; font-size: 11px; margin-top: 4px;">Copy & paste this code into your HTML:</p>
+      <textarea readonly>&lt;iframe src="https://gamgsp.github.io/gspc-swap-widget/" width="360" height="420" frameborder="0" style="border:none;border-radius:16px;overflow:hidden;"&gt;&lt;/iframe&gt;</textarea>
+      <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const rates = {
+      GSPC: 0.10,
+      USDT: 1.0,
+      BTC: 85000.0,
+      LTC: 110.0,
+      SOL: 190.0
+    };
+
+    const sendAmount = document.getElementById("sendAmount");
+    const sendCoin = document.getElementById("sendCoin");
+    const receiveAmount = document.getElementById("receiveAmount");
+    const receiveCoin = document.getElementById("receiveCoin");
+    const rateDisplay = document.getElementById("rateDisplay");
+    const tradeBtn = document.getElementById("tradeBtn");
+
+    function calculate() {
+      const from = sendCoin.value;
+      const to = receiveCoin.value;
+      const val = parseFloat(sendAmount.value) || 0;
+
+      const fromPrice = rates[from] || 1;
+      const toPrice = rates[to] || 1;
+
+      const rate = fromPrice / toPrice;
+      const received = val * rate;
+
+      receiveAmount.value = received > 0 ? (received >= 1 ? received.toFixed(2) : received.toFixed(6)) : "0";
+      rateDisplay.innerText = `1 ${from} ≈ ${rate >= 1 ? rate.toFixed(2) : rate.toFixed(6)} ${to}`;
+
+      tradeBtn.href = `https://exchange.gspcoin.us/swap?from=${from}&to=${to}`;
+    }
+
+    sendAmount.addEventListener("input", calculate);
+    sendCoin.addEventListener("change", calculate);
+    receiveCoin.addEventListener("change", calculate);
+
+    calculate();
+
+    function openModal() {
+      document.getElementById("embedModal").style.display = "flex";
+    }
+    function closeModal() {
+      document.getElementById("embedModal").style.display = "none";
+    }
+  </script>
+</body>
+</html>
