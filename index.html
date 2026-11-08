@@ -4,17 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GSPC Exchange | Instant Crypto Swap & Rate Calculator</title>
-  <meta name="description" content="Embeddable, responsive crypto swap and rate calculator for GSPC Exchange. Supports 21 multi-chain assets with non-custodial P2P escrow.">
+  <meta name="description" content="Embeddable, responsive crypto swap and rate calculator for GSPC Exchange. Supports 21 multi-chain assets with searchable selection and non-custodial P2P escrow.">
   <style>
     :root {
       --bg: #0b0e14;
       --card-bg: #151a23;
       --border: #232d3f;
+      --border-focus: #3b82f6;
       --accent: #2563eb;
       --accent-hover: #1d4ed8;
       --text-main: #f1f5f9;
       --text-sub: #94a3b8;
       --badge-bg: #1e293b;
+      --input-bg: #0f141c;
+      --hover-bg: #1e2638;
       --success: #10b981;
     }
     * {
@@ -40,6 +43,7 @@
       width: 100%;
       max-width: 440px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      position: relative;
     }
     .header {
       display: flex;
@@ -51,6 +55,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      text-decoration: none;
+      color: inherit;
     }
     .brand-logo {
       height: 28px;
@@ -70,11 +76,15 @@
       font-weight: 600;
     }
     .field-group {
-      background: #0f141c;
+      background: var(--input-bg);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 12px 16px;
       margin-bottom: 12px;
+      transition: border-color 0.2s;
+    }
+    .field-group:focus-within {
+      border-color: var(--border-focus);
     }
     .field-label {
       font-size: 0.8rem;
@@ -93,22 +103,44 @@
       background: transparent;
       border: none;
       color: var(--text-main);
-      font-size: 1.3rem;
+      font-size: 1.35rem;
       font-weight: 600;
-      width: 60%;
+      width: 52%;
       outline: none;
     }
-    .field-input-row select {
+    .token-select-btn {
       background: var(--card-bg);
-      color: var(--text-main);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      color: var(--text-main);
+      border-radius: 12px;
       padding: 8px 12px;
       font-size: 0.95rem;
       font-weight: 600;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
       outline: none;
-      max-width: 45%;
+      user-select: none;
+    }
+    .token-select-btn:hover {
+      border-color: var(--border-focus);
+      background: var(--hover-bg);
+    }
+    .token-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .token-symbol {
+      font-weight: 700;
+    }
+    .token-arrow {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-left: 2px;
     }
     .swap-btn-row {
       display: flex;
@@ -136,6 +168,7 @@
     .rate-info {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 0.8rem;
       color: var(--text-sub);
       margin: 12px 4px 18px 4px;
@@ -179,8 +212,120 @@
       cursor: pointer;
       color: var(--accent);
     }
+
+    /* Token Search Modal */
+    .token-modal {
+      display: none;
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      flex-direction: column;
+      z-index: 50;
+      animation: fadeIn 0.15s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .modal-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+    .close-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+    }
+    .close-icon-btn:hover {
+      color: var(--text-main);
+    }
+    .search-box-row {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px 12px 36px;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--border-focus);
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-sub);
+      font-size: 0.9rem;
+    }
+    .token-list {
+      flex: 1;
+      overflow-y: auto;
+      margin-right: -4px;
+      padding-right: 4px;
+    }
+    .token-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .token-item:hover {
+      background: var(--hover-bg);
+    }
+    .token-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .token-item-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .token-item-symbol {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .token-item-name {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+    .token-item-price {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .empty-state {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+    }
+
     /* Embed Modal */
-    .modal {
+    .embed-modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -188,19 +333,15 @@
       justify-content: center;
       align-items: center;
       padding: 16px;
+      z-index: 100;
     }
-    .modal-content {
+    .embed-modal-box {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 16px;
       padding: 20px;
       max-width: 480px;
       width: 100%;
-    }
-    .modal-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin-bottom: 10px;
     }
     .code-block {
       background: #090d14;
@@ -212,9 +353,9 @@
       color: #38bdf8;
       word-break: break-all;
       user-select: all;
+      margin: 12px 0;
     }
-    .close-btn {
-      margin-top: 12px;
+    .embed-close-btn {
       background: var(--border);
       border: none;
       color: #fff;
@@ -229,10 +370,10 @@
 
   <div class="widget-card">
     <div class="header">
-      <div class="brand">
+      <a class="brand" href="https://exchange.gspcoin.us" target="_blank" rel="noopener">
         <img class="brand-logo" src="https://exchange.gspcoin.us/exchange-banner.png" alt="GSPC">
         <span class="brand-title">GSPC Exchange</span>
-      </div>
+      </a>
       <span class="badge">21 Assets • P2P Escrow</span>
     </div>
 
@@ -240,76 +381,42 @@
     <div class="field-group">
       <div class="field-label">
         <span>You Send</span>
+        <span id="sendBalanceLabel">Instant Matching</span>
       </div>
       <div class="field-input-row">
-        <input type="number" id="sendAmount" value="100" min="0" step="any">
-        <select id="sendCoin">
-          <option value="USDT" selected>USDT (Tether)</option>
-          <option value="USDC">USDC (USD Coin)</option>
-          <option value="GSPC">GSPC (GSPCoin)</option>
-          <option value="BTC">BTC (Bitcoin)</option>
-          <option value="ETH">ETH (Ethereum)</option>
-          <option value="LTC">LTC (Litecoin)</option>
-          <option value="BNB">BNB (BNB Chain)</option>
-          <option value="SOL">SOL (Solana)</option>
-          <option value="XRP">XRP (Ripple)</option>
-          <option value="DOGE">DOGE (Dogecoin)</option>
-          <option value="ADA">ADA (Cardano)</option>
-          <option value="TRX">TRX (TRON)</option>
-          <option value="AVAX">AVAX (Avalanche)</option>
-          <option value="SUI">SUI (Sui)</option>
-          <option value="NEAR">NEAR (NEAR Protocol)</option>
-          <option value="BCH">BCH (Bitcoin Cash)</option>
-          <option value="ETC">ETC (Ethereum Classic)</option>
-          <option value="DASH">DASH (Dash)</option>
-          <option value="ZEC">ZEC (Zcash)</option>
-          <option value="KAS">KAS (Kaspa)</option>
-          <option value="DGB">DGB (DigiByte)</option>
-        </select>
+        <input type="number" id="sendAmount" value="100" min="0" step="any" placeholder="0.0">
+        <button class="token-select-btn" onclick="openTokenModal('send')">
+          <img id="sendTokenIcon" class="token-icon" src="https://exchange.gspcoin.us/tokens/usdt.png" alt="USDT">
+          <span id="sendTokenSymbol" class="token-symbol">USDT</span>
+          <span class="token-arrow">▾</span>
+        </button>
       </div>
     </div>
 
     <!-- SWAP BUTTON -->
     <div class="swap-btn-row">
-      <button class="swap-icon-btn" onclick="flipCoins()" title="Switch pairs">⇅</button>
+      <button class="swap-icon-btn" onclick="flipTokens()" title="Switch send & receive tokens">⇅</button>
     </div>
 
     <!-- TO -->
     <div class="field-group">
       <div class="field-label">
         <span>You Receive (Estimated)</span>
+        <span>Zero Custodial Risk</span>
       </div>
       <div class="field-input-row">
-        <input type="number" id="receiveAmount" value="1000" readonly>
-        <select id="receiveCoin">
-          <option value="GSPC" selected>GSPC (GSPCoin)</option>
-          <option value="USDT">USDT (Tether)</option>
-          <option value="USDC">USDC (USD Coin)</option>
-          <option value="BTC">BTC (Bitcoin)</option>
-          <option value="ETH">ETH (Ethereum)</option>
-          <option value="LTC">LTC (Litecoin)</option>
-          <option value="BNB">BNB (BNB Chain)</option>
-          <option value="SOL">SOL (Solana)</option>
-          <option value="XRP">XRP (Ripple)</option>
-          <option value="DOGE">DOGE (Dogecoin)</option>
-          <option value="ADA">ADA (Cardano)</option>
-          <option value="TRX">TRX (TRON)</option>
-          <option value="AVAX">AVAX (Avalanche)</option>
-          <option value="SUI">SUI (Sui)</option>
-          <option value="NEAR">NEAR (NEAR Protocol)</option>
-          <option value="BCH">BCH (Bitcoin Cash)</option>
-          <option value="ETC">ETC (Ethereum Classic)</option>
-          <option value="DASH">DASH (Dash)</option>
-          <option value="ZEC">ZEC (Zcash)</option>
-          <option value="KAS">KAS (Kaspa)</option>
-          <option value="DGB">DGB (DigiByte)</option>
-        </select>
+        <input type="number" id="receiveAmount" value="0" readonly placeholder="0.0">
+        <button class="token-select-btn" onclick="openTokenModal('receive')">
+          <img id="receiveTokenIcon" class="token-icon" src="https://exchange.gspcoin.us/tokens/gspc.png" alt="GSPC">
+          <span id="receiveTokenSymbol" class="token-symbol">GSPC</span>
+          <span class="token-arrow">▾</span>
+        </button>
       </div>
     </div>
 
     <div class="rate-info">
       <span>Exchange Rate</span>
-      <span id="rateLabel">1 USDT ≈ 1,000 GSPC</span>
+      <span id="rateLabel">1 USDT ≈ ... GSPC</span>
     </div>
 
     <a id="tradeBtn" class="action-btn" href="https://exchange.gspcoin.us/swap" target="_blank" rel="noopener">
@@ -317,49 +424,110 @@
     </a>
 
     <div class="footer-links">
-      <span>🛡️ Non-Custodial P2P Escrow</span>
-      <span class="embed-trigger" onclick="openModal()">Embed Widget &lt;/&gt;</span>
+      <span>🛡️ Non-Custodial Escrow</span>
+      <span class="embed-trigger" onclick="openEmbedModal()">Embed Widget &lt;/&gt;</span>
+    </div>
+
+    <!-- Searchable Token Selector Modal -->
+    <div id="tokenModal" class="token-modal">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTargetTitle">Select Token</div>
+        <button class="close-icon-btn" onclick="closeTokenModal()">✕</button>
+      </div>
+
+      <div class="search-box-row">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="tokenSearchInput" class="search-input" placeholder="Search name or symbol..." autocomplete="off">
+      </div>
+
+      <div id="tokenList" class="token-list">
+        <!-- Dynamically rendered alphabetically -->
+      </div>
     </div>
   </div>
 
   <!-- Embed Modal -->
-  <div id="embedModal" class="modal">
-    <div class="modal-content">
+  <div id="embedModalOverlay" class="embed-modal-overlay">
+    <div class="embed-modal-box">
       <div class="modal-title">Embed GSPC Exchange Widget</div>
       <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 12px;">Copy and paste this snippet into your HTML to embed this swap calculator on your website:</p>
       <div class="code-block" id="embedCode">
 &lt;iframe src="https://gamgsp.github.io/gspc-swap-widget/" width="100%" height="480px" frameborder="0" style="border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4);"&gt;&lt;/iframe&gt;
       </div>
-      <button class="close-btn" onclick="closeModal()">Close</button>
+      <button class="embed-close-btn" onclick="closeEmbedModal()">Close</button>
     </div>
   </div>
 
   <script>
+    // 21 Supported Tokens strictly Alphabetical by Symbol (A to Z)
+    const TOKENS = [
+      { symbol: "ADA",  name: "Cardano",           icon: "https://exchange.gspcoin.us/tokens/ada.png" },
+      { symbol: "AVAX", name: "Avalanche",         icon: "https://exchange.gspcoin.us/tokens/avax.png" },
+      { symbol: "BCH",  name: "Bitcoin Cash",      icon: "https://exchange.gspcoin.us/tokens/bch.png" },
+      { symbol: "BNB",  name: "BNB Chain",         icon: "https://exchange.gspcoin.us/tokens/bnb.png" },
+      { symbol: "BTC",  name: "Bitcoin",           icon: "https://exchange.gspcoin.us/tokens/btc.png" },
+      { symbol: "DASH", name: "Dash",              icon: "https://exchange.gspcoin.us/tokens/dash.png" },
+      { symbol: "DGB",  name: "DigiByte",          icon: "https://exchange.gspcoin.us/tokens/dgb.png" },
+      { symbol: "DOGE", name: "Dogecoin",          icon: "https://exchange.gspcoin.us/tokens/doge.png" },
+      { symbol: "ETC",  name: "Ethereum Classic",  icon: "https://exchange.gspcoin.us/tokens/etc.png" },
+      { symbol: "ETH",  name: "Ethereum",          icon: "https://exchange.gspcoin.us/tokens/eth.png" },
+      { symbol: "GSPC", name: "GSPCoin",           icon: "https://exchange.gspcoin.us/tokens/gspc.png" },
+      { symbol: "KAS",  name: "Kaspa",             icon: "https://exchange.gspcoin.us/tokens/kas.png" },
+      { symbol: "LTC",  name: "Litecoin",          icon: "https://exchange.gspcoin.us/tokens/ltc.png" },
+      { symbol: "NEAR", name: "NEAR Protocol",     icon: "https://exchange.gspcoin.us/tokens/near.png" },
+      { symbol: "SOL",  name: "Solana",            icon: "https://exchange.gspcoin.us/tokens/sol.png" },
+      { symbol: "SUI",  name: "Sui",               icon: "https://exchange.gspcoin.us/tokens/sui.png" },
+      { symbol: "TRX",  name: "TRON",              icon: "https://exchange.gspcoin.us/tokens/trx.png" },
+      { symbol: "USDC", name: "USD Coin",          icon: "https://exchange.gspcoin.us/tokens/usdc.png" },
+      { symbol: "USDT", name: "Tether",            icon: "https://exchange.gspcoin.us/tokens/usdt.png" },
+      { symbol: "XRP",  name: "XRP",               icon: "https://exchange.gspcoin.us/tokens/xrp.png" },
+      { symbol: "ZEC",  name: "Zcash",             icon: "https://exchange.gspcoin.us/tokens/zec.png" }
+    ];
+
+    // USD benchmark rates with automatic live sync
     const rates = {
-      GSPC: 0.00020,
-      USDT: 1.0,
-      USDC: 1.0,
-      BTC: 89000.0,
-      ETH: 3100.0,
-      LTC: 95.0,
-      BNB: 620.0,
-      SOL: 185.0,
-      XRP: 0.85,
-      DOGE: 0.28,
-      ADA: 0.75,
-      TRX: 0.20,
+      ADA: 0.18,
       AVAX: 32.0,
-      SUI: 2.80,
-      NEAR: 5.40,
       BCH: 440.0,
-      ETC: 26.0,
+      BNB: 620.0,
+      BTC: 89000.0,
       DASH: 34.0,
-      ZEC: 45.0,
+      DGB: 0.012,
+      DOGE: 0.28,
+      ETC: 26.0,
+      ETH: 3100.0,
+      GSPC: 0.00020,
       KAS: 0.14,
-      DGB: 0.012
+      LTC: 95.0,
+      NEAR: 5.40,
+      SOL: 185.0,
+      SUI: 2.80,
+      TRX: 0.20,
+      USDC: 1.0,
+      USDT: 1.0,
+      XRP: 0.85,
+      ZEC: 45.0
     };
 
-    // Attempt to load live rates from exchange
+    let activeSide = 'send'; // 'send' or 'receive'
+    let currentSendSymbol = 'USDT';
+    let currentReceiveSymbol = 'GSPC';
+
+    const sendAmount = document.getElementById('sendAmount');
+    const receiveAmount = document.getElementById('receiveAmount');
+    const sendTokenIcon = document.getElementById('sendTokenIcon');
+    const sendTokenSymbol = document.getElementById('sendTokenSymbol');
+    const receiveTokenIcon = document.getElementById('receiveTokenIcon');
+    const receiveTokenSymbol = document.getElementById('receiveTokenSymbol');
+    const rateLabel = document.getElementById('rateLabel');
+    const tradeBtn = document.getElementById('tradeBtn');
+
+    const tokenModal = document.getElementById('tokenModal');
+    const tokenSearchInput = document.getElementById('tokenSearchInput');
+    const tokenList = document.getElementById('tokenList');
+    const modalTargetTitle = document.getElementById('modalTargetTitle');
+
+    // Fetch live market tickers from exchange
     async function loadLiveRates() {
       try {
         const res = await fetch("https://exchange.gspcoin.us/api/v1/summary");
@@ -374,52 +542,126 @@
           recalculate();
         }
       } catch (e) {
-        // Fallback to defaults
+        // Fallback to initial benchmarks
       }
     }
 
-    const sendAmount = document.getElementById('sendAmount');
-    const sendCoin = document.getElementById('sendCoin');
-    const receiveAmount = document.getElementById('receiveAmount');
-    const receiveCoin = document.getElementById('receiveCoin');
-    const rateLabel = document.getElementById('rateLabel');
-    const tradeBtn = document.getElementById('tradeBtn');
-
     function recalculate() {
-      const from = sendCoin.value;
-      const to = receiveCoin.value;
       const amt = parseFloat(sendAmount.value) || 0;
+      const fromPrice = rates[currentSendSymbol] || 1;
+      const toPrice = rates[currentReceiveSymbol] || 1;
 
-      const fromPriceUsd = rates[from] || 1;
-      const toPriceUsd = rates[to] || 1;
-
-      const received = (amt * fromPriceUsd) / toPriceUsd;
+      const received = (amt * fromPrice) / toPrice;
       receiveAmount.value = received > 1 ? received.toLocaleString('en-US', {maximumFractionDigits: 4}) : received.toFixed(6);
 
-      const unitRate = fromPriceUsd / toPriceUsd;
-      rateLabel.textContent = `1 ${from} ≈ ${unitRate > 1 ? unitRate.toLocaleString('en-US', {maximumFractionDigits: 4}) : unitRate.toFixed(6)} ${to}`;
+      const unitRate = fromPrice / toPrice;
+      const unitRateStr = unitRate > 1 ? unitRate.toLocaleString('en-US', {maximumFractionDigits: 4}) : unitRate.toFixed(6);
+      rateLabel.textContent = `1 ${currentSendSymbol} ≈ ${unitRateStr} ${currentReceiveSymbol}`;
 
-      tradeBtn.href = `https://exchange.gspcoin.us/swap?from=${from}&to=${to}`;
+      tradeBtn.href = `https://exchange.gspcoin.us/swap?from=${currentSendSymbol}&to=${currentReceiveSymbol}`;
     }
 
-    function flipCoins() {
-      const temp = sendCoin.value;
-      sendCoin.value = receiveCoin.value;
-      receiveCoin.value = temp;
+    function flipTokens() {
+      const temp = currentSendSymbol;
+      setToken('send', currentReceiveSymbol);
+      setToken('receive', temp);
       recalculate();
     }
 
+    function setToken(side, symbol) {
+      const token = TOKENS.find(t => t.symbol === symbol);
+      if (!token) return;
+
+      if (side === 'send') {
+        currentSendSymbol = token.symbol;
+        sendTokenSymbol.textContent = token.symbol;
+        sendTokenIcon.src = token.icon;
+      } else {
+        currentReceiveSymbol = token.symbol;
+        receiveTokenSymbol.textContent = token.symbol;
+        receiveTokenIcon.src = token.icon;
+      }
+    }
+
+    function openTokenModal(side) {
+      activeSide = side;
+      modalTargetTitle.textContent = side === 'send' ? 'Select Token to Send' : 'Select Token to Receive';
+      tokenSearchInput.value = '';
+      renderTokenList('');
+      tokenModal.style.display = 'flex';
+      tokenSearchInput.focus();
+    }
+
+    function closeTokenModal() {
+      tokenModal.style.display = 'none';
+    }
+
+    function renderTokenList(query) {
+      tokenList.innerHTML = '';
+      const q = query.trim().toLowerCase();
+
+      // Alphabetical filtering
+      const filtered = TOKENS.filter(t => 
+        t.symbol.toLowerCase().includes(q) || 
+        t.name.toLowerCase().includes(q)
+      );
+
+      if (filtered.length === 0) {
+        tokenList.innerHTML = '<div class="empty-state">No matching cryptocurrency found</div>';
+        return;
+      }
+
+      filtered.forEach(t => {
+        const item = document.createElement('div');
+        item.className = 'token-item';
+        
+        const price = rates[t.symbol];
+        const priceDisplay = price >= 1 ? `$${price.toLocaleString('en-US', {maximumFractionDigits: 2})}` : `$${price.toFixed(5)}`;
+
+        item.innerHTML = `
+          <div class="token-item-left">
+            <img class="token-icon" src="${t.icon}" alt="${t.symbol}">
+            <div class="token-item-info">
+              <span class="token-item-symbol">${t.symbol}</span>
+              <span class="token-item-name">${t.name}</span>
+            </div>
+          </div>
+          <div class="token-item-price">${priceDisplay}</div>
+        `;
+
+        item.onclick = () => {
+          setToken(activeSide, t.symbol);
+          closeTokenModal();
+          recalculate();
+        };
+
+        tokenList.appendChild(item);
+      });
+    }
+
+    tokenSearchInput.addEventListener('input', (e) => {
+      renderTokenList(e.target.value);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeTokenModal();
+        closeEmbedModal();
+      }
+    });
+
     sendAmount.addEventListener('input', recalculate);
-    sendCoin.addEventListener('change', recalculate);
-    receiveCoin.addEventListener('change', recalculate);
 
-    function openModal() {
-      document.getElementById('embedModal').style.display = 'flex';
+    function openEmbedModal() {
+      document.getElementById('embedModalOverlay').style.display = 'flex';
     }
-    function closeModal() {
-      document.getElementById('embedModal').style.display = 'none';
+    function closeEmbedModal() {
+      document.getElementById('embedModalOverlay').style.display = 'none';
     }
 
+    // Initialize
+    setToken('send', 'USDT');
+    setToken('receive', 'GSPC');
     loadLiveRates();
     recalculate();
   </script>
