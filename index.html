@@ -54,17 +54,12 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 10px;
       text-decoration: none;
-      color: inherit;
     }
     .brand-logo {
-      height: 28px;
-    }
-    .brand-title {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      height: 32px;
+      max-width: 180px;
+      object-fit: contain;
     }
     .badge {
       background: var(--badge-bg);
@@ -105,8 +100,11 @@
       color: var(--text-main);
       font-size: 1.35rem;
       font-weight: 600;
-      width: 52%;
+      width: 54%;
       outline: none;
+    }
+    .field-input-row input[readonly] {
+      cursor: default;
     }
     .token-select-btn {
       background: var(--card-bg);
@@ -371,8 +369,7 @@
   <div class="widget-card">
     <div class="header">
       <a class="brand" href="https://exchange.gspcoin.us" target="_blank" rel="noopener">
-        <img class="brand-logo" src="https://exchange.gspcoin.us/exchange-banner.png" alt="GSPC">
-        <span class="brand-title">GSPC Exchange</span>
+        <img class="brand-logo" src="logo-white.png" alt="GSPC Exchange">
       </a>
       <span class="badge">21 Assets • P2P Escrow</span>
     </div>
@@ -405,7 +402,7 @@
         <span>Zero Custodial Risk</span>
       </div>
       <div class="field-input-row">
-        <input type="number" id="receiveAmount" value="0" readonly placeholder="0.0">
+        <input type="text" id="receiveAmount" value="0.00" readonly placeholder="0.00">
         <button class="token-select-btn" onclick="openTokenModal('receive')">
           <img id="receiveTokenIcon" class="token-icon" src="https://exchange.gspcoin.us/tokens/gspc.png" alt="GSPC">
           <span id="receiveTokenSymbol" class="token-symbol">GSPC</span>
@@ -486,7 +483,7 @@
 
     // USD benchmark rates with automatic live sync
     const rates = {
-      ADA: 0.18,
+      ADA: 0.18077,
       AVAX: 32.0,
       BCH: 440.0,
       BNB: 620.0,
@@ -527,6 +524,32 @@
     const tokenList = document.getElementById('tokenList');
     const modalTargetTitle = document.getElementById('modalTargetTitle');
 
+    function formatAmount(val) {
+      if (isNaN(val) || !isFinite(val) || val <= 0) return "0.00";
+      if (val >= 1000) {
+        return val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+      } else if (val >= 1) {
+        return val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+      } else if (val >= 0.0001) {
+        return val.toFixed(6);
+      } else {
+        return val.toFixed(8);
+      }
+    }
+
+    function formatRate(val) {
+      if (isNaN(val) || !isFinite(val) || val <= 0) return "0.00";
+      if (val >= 1000) {
+        return val.toLocaleString('en-US', { maximumFractionDigits: 4 });
+      } else if (val >= 1) {
+        return val.toLocaleString('en-US', { maximumFractionDigits: 4 });
+      } else if (val >= 0.0001) {
+        return val.toFixed(6);
+      } else {
+        return val.toFixed(8);
+      }
+    }
+
     // Fetch live market tickers from exchange
     async function loadLiveRates() {
       try {
@@ -542,7 +565,7 @@
           recalculate();
         }
       } catch (e) {
-        // Fallback to initial benchmarks
+        // Fallback to benchmarks
       }
     }
 
@@ -552,11 +575,10 @@
       const toPrice = rates[currentReceiveSymbol] || 1;
 
       const received = (amt * fromPrice) / toPrice;
-      receiveAmount.value = received > 1 ? received.toLocaleString('en-US', {maximumFractionDigits: 4}) : received.toFixed(6);
+      receiveAmount.value = formatAmount(received);
 
       const unitRate = fromPrice / toPrice;
-      const unitRateStr = unitRate > 1 ? unitRate.toLocaleString('en-US', {maximumFractionDigits: 4}) : unitRate.toFixed(6);
-      rateLabel.textContent = `1 ${currentSendSymbol} ≈ ${unitRateStr} ${currentReceiveSymbol}`;
+      rateLabel.textContent = `1 ${currentSendSymbol} ≈ ${formatRate(unitRate)} ${currentReceiveSymbol}`;
 
       tradeBtn.href = `https://exchange.gspcoin.us/swap?from=${currentSendSymbol}&to=${currentReceiveSymbol}`;
     }
@@ -600,7 +622,6 @@
       tokenList.innerHTML = '';
       const q = query.trim().toLowerCase();
 
-      // Alphabetical filtering
       const filtered = TOKENS.filter(t => 
         t.symbol.toLowerCase().includes(q) || 
         t.name.toLowerCase().includes(q)
@@ -651,6 +672,8 @@
     });
 
     sendAmount.addEventListener('input', recalculate);
+    sendAmount.addEventListener('keyup', recalculate);
+    sendAmount.addEventListener('change', recalculate);
 
     function openEmbedModal() {
       document.getElementById('embedModalOverlay').style.display = 'flex';
