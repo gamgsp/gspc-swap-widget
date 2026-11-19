@@ -368,7 +368,7 @@
 
   <div class="widget-card">
     <div class="header">
-      <a class="brand" href="https://exchange.gspcoin.us" target="_blank" rel="noopener">
+      <a class="brand" href="https://gspcexchange.com" target="_blank" rel="noopener">
         <img class="brand-logo" src="logo-white.png" alt="GSPC Exchange">
       </a>
       <span class="badge">21 Assets • P2P Escrow</span>
@@ -383,7 +383,7 @@
       <div class="field-input-row">
         <input type="number" id="sendAmount" value="100" min="0" step="any" placeholder="0.0">
         <button class="token-select-btn" onclick="openTokenModal('send')">
-          <img id="sendTokenIcon" class="token-icon" src="https://exchange.gspcoin.us/tokens/usdt.png" alt="USDT">
+          <img id="sendTokenIcon" class="token-icon" src="https://gspcexchange.com/tokens/usdt.png" alt="USDT">
           <span id="sendTokenSymbol" class="token-symbol">USDT</span>
           <span class="token-arrow">▾</span>
         </button>
@@ -404,7 +404,7 @@
       <div class="field-input-row">
         <input type="text" id="receiveAmount" value="0.00" readonly placeholder="0.00">
         <button class="token-select-btn" onclick="openTokenModal('receive')">
-          <img id="receiveTokenIcon" class="token-icon" src="https://exchange.gspcoin.us/tokens/gspc.png" alt="GSPC">
+          <img id="receiveTokenIcon" class="token-icon" src="https://gspcexchange.com/tokens/gspc.png" alt="GSPC">
           <span id="receiveTokenSymbol" class="token-symbol">GSPC</span>
           <span class="token-arrow">▾</span>
         </button>
@@ -416,7 +416,7 @@
       <span id="rateLabel">1 USDT ≈ ... GSPC</span>
     </div>
 
-    <a id="tradeBtn" class="action-btn" href="https://exchange.gspcoin.us/swap" target="_blank" rel="noopener">
+    <a id="tradeBtn" class="action-btn" href="https://gspcexchange.com/swap" target="_blank" rel="noopener">
       Trade on GSPC Exchange
     </a>
 
@@ -458,27 +458,27 @@
   <script>
     // 21 Supported Tokens strictly Alphabetical by Symbol (A to Z)
     const TOKENS = [
-      { symbol: "ADA",  name: "Cardano",           icon: "https://exchange.gspcoin.us/tokens/ada.png" },
-      { symbol: "AVAX", name: "Avalanche",         icon: "https://exchange.gspcoin.us/tokens/avax.png" },
-      { symbol: "BCH",  name: "Bitcoin Cash",      icon: "https://exchange.gspcoin.us/tokens/bch.png" },
-      { symbol: "BNB",  name: "BNB Chain",         icon: "https://exchange.gspcoin.us/tokens/bnb.png" },
-      { symbol: "BTC",  name: "Bitcoin",           icon: "https://exchange.gspcoin.us/tokens/btc.png" },
-      { symbol: "DASH", name: "Dash",              icon: "https://exchange.gspcoin.us/tokens/dash.png" },
-      { symbol: "DGB",  name: "DigiByte",          icon: "https://exchange.gspcoin.us/tokens/dgb.png" },
-      { symbol: "DOGE", name: "Dogecoin",          icon: "https://exchange.gspcoin.us/tokens/doge.png" },
-      { symbol: "ETC",  name: "Ethereum Classic",  icon: "https://exchange.gspcoin.us/tokens/etc.png" },
-      { symbol: "ETH",  name: "Ethereum",          icon: "https://exchange.gspcoin.us/tokens/eth.png" },
-      { symbol: "GSPC", name: "GSPCoin",           icon: "https://exchange.gspcoin.us/tokens/gspc.png" },
-      { symbol: "KAS",  name: "Kaspa",             icon: "https://exchange.gspcoin.us/tokens/kas.png" },
-      { symbol: "LTC",  name: "Litecoin",          icon: "https://exchange.gspcoin.us/tokens/ltc.png" },
-      { symbol: "NEAR", name: "NEAR Protocol",     icon: "https://exchange.gspcoin.us/tokens/near.png" },
-      { symbol: "SOL",  name: "Solana",            icon: "https://exchange.gspcoin.us/tokens/sol.png" },
-      { symbol: "SUI",  name: "Sui",               icon: "https://exchange.gspcoin.us/tokens/sui.png" },
-      { symbol: "TRX",  name: "TRON",              icon: "https://exchange.gspcoin.us/tokens/trx.png" },
-      { symbol: "USDC", name: "USD Coin",          icon: "https://exchange.gspcoin.us/tokens/usdc.png" },
-      { symbol: "USDT", name: "Tether",            icon: "https://exchange.gspcoin.us/tokens/usdt.png" },
-      { symbol: "XRP",  name: "XRP",               icon: "https://exchange.gspcoin.us/tokens/xrp.png" },
-      { symbol: "ZEC",  name: "Zcash",             icon: "https://exchange.gspcoin.us/tokens/zec.png" }
+      { symbol: "ADA",  name: "Cardano",           icon: "https://gspcexchange.com/tokens/ada.png" },
+      { symbol: "AVAX", name: "Avalanche",         icon: "https://gspcexchange.com/tokens/avax.png" },
+      { symbol: "BCH",  name: "Bitcoin Cash",      icon: "https://gspcexchange.com/tokens/bch.png" },
+      { symbol: "BNB",  name: "BNB Chain",         icon: "https://gspcexchange.com/tokens/bnb.png" },
+      { symbol: "BTC",  name: "Bitcoin",           icon: "https://gspcexchange.com/tokens/btc.png" },
+      { symbol: "DASH", name: "Dash",              icon: "https://gspcexchange.com/tokens/dash.png" },
+      { symbol: "DGB",  name: "DigiByte",          icon: "https://gspcexchange.com/tokens/dgb.png" },
+      { symbol: "DOGE", name: "Dogecoin",          icon: "https://gspcexchange.com/tokens/doge.png" },
+      { symbol: "ETC",  name: "Ethereum Classic",  icon: "https://gspcexchange.com/tokens/etc.png" },
+      { symbol: "ETH",  name: "Ethereum",          icon: "https://gspcexchange.com/tokens/eth.png" },
+      { symbol: "GSPC", name: "GSPCoin",           icon: "https://gspcexchange.com/tokens/gspc.png" },
+      { symbol: "KAS",  name: "Kaspa",             icon: "https://gspcexchange.com/tokens/kas.png" },
+      { symbol: "LTC",  name: "Litecoin",          icon: "https://gspcexchange.com/tokens/ltc.png" },
+      { symbol: "NEAR", name: "NEAR Protocol",     icon: "https://gspcexchange.com/tokens/near.png" },
+      { symbol: "SOL",  name: "Solana",            icon: "https://gspcexchange.com/tokens/sol.png" },
+      { symbol: "SUI",  name: "Sui",               icon: "https://gspcexchange.com/tokens/sui.png" },
+      { symbol: "TRX",  name: "TRON",              icon: "https://gspcexchange.com/tokens/trx.png" },
+      { symbol: "USDC", name: "USD Coin",          icon: "https://gspcexchange.com/tokens/usdc.png" },
+      { symbol: "USDT", name: "Tether",            icon: "https://gspcexchange.com/tokens/usdt.png" },
+      { symbol: "XRP",  name: "XRP",               icon: "https://gspcexchange.com/tokens/xrp.png" },
+      { symbol: "ZEC",  name: "Zcash",             icon: "https://gspcexchange.com/tokens/zec.png" }
     ];
 
     // USD benchmark rates with automatic live sync
@@ -553,7 +553,7 @@
     // Fetch live market tickers from exchange
     async function loadLiveRates() {
       try {
-        const res = await fetch("https://exchange.gspcoin.us/api/v1/summary");
+        const res = await fetch("https://gspcexchange.com/api/v1/summary");
         if (res.ok) {
           const data = await res.json();
           for (const key in data) {
@@ -580,7 +580,7 @@
       const unitRate = fromPrice / toPrice;
       rateLabel.textContent = `1 ${currentSendSymbol} ≈ ${formatRate(unitRate)} ${currentReceiveSymbol}`;
 
-      tradeBtn.href = `https://exchange.gspcoin.us/swap?from=${currentSendSymbol}&to=${currentReceiveSymbol}`;
+      tradeBtn.href = `https://gspcexchange.com/swap?from=${currentSendSymbol}&to=${currentReceiveSymbol}`;
     }
 
     function flipTokens() {
